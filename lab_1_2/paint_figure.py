@@ -14,7 +14,7 @@ def visualize_function_2D(f:callable, init_point, plot_step=1000, x_range=[-5,5]
     # Vars + Values
     x = np.linspace(x_range[0],x_range[1],plot_step)
     Y = f(x)
-    minimum, path = grad.gradient_solve(f, 1e-4, 1e-7, init_point, max_steps=1000)
+    minimum, path = grad.gradient_solve(f, 1e-4, 1e-7, init_point, max_steps=10000)
     min_value = f(minimum)
     
     # Figure setup
@@ -47,6 +47,7 @@ def visualize_function_3D(g:callable, init_x1, init_x2, plot_step=1000, x_range=
     x2 = np.linspace(x_range[0], x_range[1], plot_step)
     X1, X2 = np.meshgrid(x1,x2)
     Z = g(X1,X2)
+    
     minimum, path = grad.gradient_solve(g, 1e-3, 1e-5, init_x1, init_x2, max_steps=100000)
     
     path_x1 = path[:, 0]

@@ -21,7 +21,7 @@ if __name__ == "__main__":
         
         # Check through other libraries if the result was correct
         min_x, min_f = scp.find_min_1D(x0=x_init)
-        print(f"[SciPy] 1D Function Minimum: x = {min_x:.6f}, f(x) = {min_f:.6f}")
+        print(f"[SciPy] 1D Function Minimum: x = {min_x:.6f}, f(x) = {min_f:.6f}\n==========")
         
     elif arg == "2":
         try:
