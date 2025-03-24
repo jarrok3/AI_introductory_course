@@ -23,12 +23,16 @@ def gradient_solve(f:callable, step, threshold, *init_args, max_steps=1000, uppe
     X_INIT = np.array(init_args,dtype=float)
     print(f"Array init:\n{X_INIT}\n===================\n")
     
+    path = [X_INIT.copy()]
+    
     # Execute gradient descent
     for _ in range(max_steps):
-        derivative = numerical_derivative(f,1e-8,X_INIT)
+        derivative = numerical_derivative(f,1e-5,X_INIT)
         
         print(f"Derivative: {derivative}")
         X_NEW = X_INIT - step * derivative
+        
+        path.append(X_NEW.copy())
         
         # Stop when minimum found
         if np.all(np.abs(X_NEW - X_INIT)<= threshold):
@@ -40,5 +44,5 @@ def gradient_solve(f:callable, step, threshold, *init_args, max_steps=1000, uppe
         print(f"New x:\n{X_NEW}\n===========")
         X_INIT = X_NEW
         
-    return X_INIT
+    return X_INIT, np.array(path)
         
