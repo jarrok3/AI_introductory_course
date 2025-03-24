@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import gradient_solve as grad
 
-def visualize_function_2D(f:callable, plot_step=1000, x_range=[-5,5]):
+def visualize_function_2D(f:callable, init_point, plot_step=1000, x_range=[-5,5]):
     """visualize function with one argument (2D)
 
     Args:
@@ -13,6 +14,8 @@ def visualize_function_2D(f:callable, plot_step=1000, x_range=[-5,5]):
     x = np.linspace(x_range[0],x_range[1],plot_step)
     Y = f(x)
     
+    grad.gradient_solve(f, 1e-6, 1e-7, init_point, max_steps=1000)
+    
     # Figure setup
     plt.figure(figsize=(8,6))
     plt.xlabel("x")
@@ -21,7 +24,7 @@ def visualize_function_2D(f:callable, plot_step=1000, x_range=[-5,5]):
     plt.plot(x,Y)
     plt.show()
 
-def visualize_function_3D(g:callable, plot_step=1000, x_range=[-100,100]):
+def visualize_function_3D(g:callable, init_x1, init_x2, plot_step=1000, x_range=[-10,10]):
     """visualize function with two arguments (3D)
 
     Args:
@@ -34,6 +37,8 @@ def visualize_function_3D(g:callable, plot_step=1000, x_range=[-100,100]):
     x2 = np.linspace(x_range[0], x_range[1], plot_step)
     X1, X2 = np.meshgrid(x1,x2)
     Z = g(X1,X2)
+    
+    grad.gradient_solve(g, 1e-4 , 1e-7, init_x1,init_x2, max_steps=1000)
     
     # Figure setup
     plt.figure(figsize=(8,6))

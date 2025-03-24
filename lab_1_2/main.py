@@ -1,5 +1,4 @@
 import problem_functions as fnc
-import gradient_solve as grad
 import paint_figure as paint
 import sys
 
@@ -11,9 +10,9 @@ if __name__ == "__main__":
         sys.exit()
     
     if arg == "1":
-        paint.visualize_function_2D(fnc.f)
+        paint.visualize_function_2D(fnc.f,-5)
     elif arg == "2":
-        paint.visualize_function_3D(fnc.g)
+        paint.visualize_function_3D(fnc.g,3,3)
     else:
         print("Expecting a selection of 1 or 2")
         sys.exit()
