@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import gradient_solve as grad
 
-def visualize_function_2D(f:callable, init_point, plot_step=1000, x_range=[-5,5]):
+def visualize_function_2D(f:callable, init_point, plot_step=1000, x_range=[-2,2]):
     """visualize function with one argument (2D)
 
     Args:
@@ -14,7 +14,7 @@ def visualize_function_2D(f:callable, init_point, plot_step=1000, x_range=[-5,5]
     # Vars + Values
     x = np.linspace(x_range[0],x_range[1],plot_step)
     Y = f(x)
-    minimum, path = grad.gradient_solve(f, 1e-4, 1e-7, init_point, max_steps=10000)
+    minimum, path = grad.gradient_solve(f, 1e-3, 1e-7, init_point, max_steps=10000)
     min_value = f(minimum)
     
     # Figure setup
