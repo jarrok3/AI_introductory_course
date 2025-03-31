@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import gradient_solve as grad
+from evaluate import evaluate
 
 def visualize_function_2D(f:callable, init_point, plot_step=1000, x_range=[-2,2]):
     """visualize function with one argument (2D)
