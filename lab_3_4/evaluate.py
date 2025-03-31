@@ -22,3 +22,4 @@ def evaluate(x, size=20):
     # reshape back to original dimensions
     # sum along the first axis to get the total number of points for each individual
     return points.reshape(np.shape(x)).sum(-1)
+    
