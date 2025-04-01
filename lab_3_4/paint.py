@@ -30,3 +30,13 @@ def paint_solution(individual,max_score, title = "Best individual score: "):
     plt.imshow(color_map, cmap=cmap, norm=norm)
     plt.title(f"{title} {max_score}")
     plt.show()
+    
+def paint_per_iter(fit_per_iter):
+    x = np.arange(len(fit_per_iter))
+    
+    plt.plot(x, fit_per_iter,linestyle="-")
+    plt.grid()
+    plt.xlabel("iteration")
+    plt.ylabel("max(q(x))",rotation=90)
+    
+    
