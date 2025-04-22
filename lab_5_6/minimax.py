@@ -5,9 +5,9 @@ import random
 def minimax(state : ConnectFourState, depth : int, max_player_char : str) -> float:
     if depth == 0 or state.is_finished():
         winner = state.get_winner()
-        if winner.char == max_player_char:
+        if winner and winner.char == max_player_char:
             return math.inf
-        elif winner.char == None:
+        elif winner == None:
             # if came across draw
             return 0.0
         else:
