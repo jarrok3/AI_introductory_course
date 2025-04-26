@@ -2,7 +2,7 @@ from two_player_games.games.connect_four import ConnectFourState, ConnectFourMov
 import math
 import random
 
-def minimax(state : ConnectFourState, depth : int, max_player_char : str) -> float:
+def minimax(state : ConnectFourState, depth : int, max_player_char : str, alpha : float = -math.inf, beta : float = math.inf) -> float:
     if depth == 0 or state.is_finished():
         winner = state.get_winner()
         
@@ -18,15 +18,21 @@ def minimax(state : ConnectFourState, depth : int, max_player_char : str) -> flo
     if state.get_current_player().char == max_player_char:
         best_move_val = -math.inf
         for move in state.get_moves():
-            calc = minimax(state=state.make_move(move), depth=depth-1, max_player_char=max_player_char)
+            calc = minimax(state=state.make_move(move), depth=depth-1, max_player_char=max_player_char, alpha=alpha, beta=beta)
             best_move_val = max(best_move_val, calc)
+            alpha = max(alpha, calc)
+            if beta <= alpha:
+                break
         return best_move_val
     # Calc the optimal round for other player
     else:
         best_move_val_second_pl = math.inf
         for move in state.get_moves():
-            calc2 = minimax(state=state.make_move(move), depth=depth-1, max_player_char=max_player_char)
+            calc2 = minimax(state=state.make_move(move), depth=depth-1, max_player_char=max_player_char, alpha=alpha, beta=beta)
             best_move_val_second_pl = min(best_move_val_second_pl, calc2)
+            beta = min(beta,calc2)
+            if beta <= alpha:
+                break
         return best_move_val_second_pl
     
 def get_best_move(state: ConnectFourState, depth: int, max_player_char: str) -> ConnectFourMove:
@@ -64,3 +70,30 @@ def get_best_move(state: ConnectFourState, depth: int, max_player_char: str) -> 
                 best_moves.append(move)
     
     return random.choice(best_moves)
+
+# USED FOR TESTING COMPARISONS
+def minimax_no_alphabeta(state : ConnectFourState, depth : int, max_player_char : str) -> float:
+    if depth == 0 or state.is_finished():
+        winner = state.get_winner()
+        
+        if winner and winner.char == max_player_char:
+            return math.inf
+        elif winner == None:
+            return 0.0
+        else:
+            return -math.inf
+    
+    if state.get_current_player().char == max_player_char:
+        best_move_val = -math.inf
+        for move in state.get_moves():
+            calc = minimax(state=state.make_move(move), depth=depth-1, max_player_char=max_player_char)
+            best_move_val = max(best_move_val, calc)
+            
+        return best_move_val
+    else:
+        best_move_val_second_pl = math.inf
+        for move in state.get_moves():
+            calc2 = minimax(state=state.make_move(move), depth=depth-1, max_player_char=max_player_char)
+            best_move_val_second_pl = min(best_move_val_second_pl, calc2)
+            
+        return best_move_val_second_pl
