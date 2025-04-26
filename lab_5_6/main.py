@@ -15,13 +15,12 @@ class simulation():
     def run(self):
         while not self.the_game.is_finished():
             if self.the_game.get_current_player() == self.the_game.first_player:
-                n_depth_move = gbm(self.the_game.state, depth_player1, self.max_player_char)
+                n_depth_move = gbm(self.the_game.state, self.depth_max_player, self.max_player_char)
                 self.the_game.make_move(n_depth_move)
             
             else:
-                moves = self.the_game.get_moves()
-                move = random.choice(moves)
-                self.the_game.make_move(move)
+                m_depth_move = gbm(self.the_game.state, self.depth_min_player, self.min_player_char)
+                self.the_game.make_move(m_depth_move)
     
     def result(self):
         winner = self.the_game.get_winner()
@@ -38,7 +37,8 @@ if __name__ == "__main__":
         sys.exit()
     except ValueError as e:
         print(f'Depth must be an integer\nError message: {e}')
-    
-    sim_connectfour = simulation(depth_player1,depth_player2)
-    sim_connectfour.run()
-    print(sim_connectfour.result())
+
+    for _ in range(10):
+        sim_connectfour = simulation(depth_player1,depth_player2)
+        sim_connectfour.run()
+        print(sim_connectfour.result())
