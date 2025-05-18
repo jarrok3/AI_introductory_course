@@ -3,7 +3,8 @@ from random_forest_algo import (
     train_random_forest,
     evaluate_model,
     plot_roc_curve,
-    optimize_hyperparameters
+    optimize_hyperparameters,
+    create_forest_n_trees
 )
 
 if __name__ == "__main__":
@@ -11,10 +12,19 @@ if __name__ == "__main__":
 
     model = train_random_forest(X_train, y_train)
 
-    y_prob = evaluate_model(model, X_test, y_test)
+    # Create forest with n trees
+    n = 300
+    fixed_model, fixed_pred, fixed_prob = create_forest_n_trees(
+        X_train, y_train, X_test, n_estimators=n
+    )
+    evaluate_model(fixed_model, X_test, y_test)
+    plot_roc_curve(y_test, fixed_prob, title=f'ROC Curve ({n} drzew)')
 
+    # Before optimization
+    y_prob = evaluate_model(model, X_test, y_test)
     plot_roc_curve(y_test, y_prob)
 
+    # After optimization
     best_model = optimize_hyperparameters(X_train, y_train)
     y_best_prob = evaluate_model(best_model, X_test, y_test)
     plot_roc_curve(y_test, y_best_prob, title='ROC Curve (po optymalizacji)')

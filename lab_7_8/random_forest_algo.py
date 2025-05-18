@@ -18,18 +18,18 @@ def load_and_prepare_data(filepath : str) -> list:
     X = df.drop('HeartDisease', axis=1)
     y = df['HeartDisease']
     X = pd.get_dummies(X, drop_first=True)
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+    scaler = StandardScaler() 
+    X_scaled = scaler.fit_transform(X) # standardize data for data integrity guarantee
     return train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 def train_random_forest(X_train, y_train) -> RandomForestClassifier:
-    model = RandomForestClassifier(random_state=42) # using built-in scikit-learn random forest algo
+    model = RandomForestClassifier(random_state=42)
     model.fit(X_train, y_train) # fit to the training set
     return model
 
 def evaluate_model(model, X_test, y_test):
     y_pred = model.predict(X_test)
-    y_prob = model.predict_proba(X_test)[:, 1]
+    y_prob = model.predict_proba(X_test)[:, 1] #probability of prediction correctness
 
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
@@ -44,7 +44,7 @@ def evaluate_model(model, X_test, y_test):
 
     return y_prob
 
-def plot_roc_curve(y_test, y_prob, title='ROC Curve'):
+def plot_roc_curve(y_test, y_prob, title :str ='ROC Curve') -> None:
     fpr, tpr, _ = roc_curve(y_test, y_prob)
     auc = roc_auc_score(y_test, y_prob)
 
@@ -58,8 +58,17 @@ def plot_roc_curve(y_test, y_prob, title='ROC Curve'):
     plt.show()
 
 def optimize_hyperparameters(X_train, y_train):
-    param_grid = {'n_estimators': [10, 50, 100, 200]}
+    param_grid = {'n_estimators': [10, 50, 100, 200, 300]}
     grid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=5, scoring='roc_auc')
     grid_search.fit(X_train, y_train)
     print(f"\nNajlepsze parametry: {grid_search.best_params_}")
     return grid_search.best_estimator_
+
+def create_forest_n_trees(X_train, y_train, X_test, n_estimators):
+    model = RandomForestClassifier(n_estimators=n_estimators, random_state=42)
+    model.fit(X_train, y_train)
+
+    y_pred = model.predict(X_test)
+    y_prob = model.predict_proba(X_test)[:, 1]
+
+    return model, y_pred, y_prob
