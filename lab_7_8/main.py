@@ -13,7 +13,7 @@ if __name__ == "__main__":
     model = train_random_forest(X_train, y_train)
 
     # Create forest with n trees
-    n = 300
+    n = 20
     fixed_model, fixed_pred, fixed_prob = create_forest_n_trees(
         X_train, y_train, X_test, n_estimators=n
     )
