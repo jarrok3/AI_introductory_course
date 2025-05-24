@@ -1,74 +1,69 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_curve, roc_auc_score
-from sklearn.preprocessing import StandardScaler
+import math
+import numpy as np
+from decision_tree import DecisionTree
+from collections import Counter
+class RandomForest:
+    def __init__(self, n_estimators=100, max_features=None):
+        self.n_estimators = n_estimators
+        self.max_features = max_features
+        self.trees = []
+        self.feature_count = None
+        self.classes = None
+        self.positive_class = None
+    
+    def fit(self, X, y):
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+        y = pd.Series(y)
+        
+        n_feats = X.shape[1]
 
-def load_and_prepare_data(filepath : str) -> list:
-    """load from .csv file and returns data split into training and test set
+        m = self.max_features
+        if m is None:
+            m = int(math.sqrt(n_feats))
+            m = max(m, 1)
 
-    Args:
-        filepath (_type_): .csv file path
+        self.feature_count = n_feats
+        self.classes = np.unique(y)
 
-    Returns:
-        _type_: x_train,x_test,y_train,y_test
-    """
-    df = pd.read_csv(filepath)
-    X = df.drop('HeartDisease', axis=1)
-    y = df['HeartDisease']
-    X = pd.get_dummies(X, drop_first=True)
-    scaler = StandardScaler() 
-    X_scaled = scaler.fit_transform(X) # standardize data for data integrity guarantee
-    return train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+        if len(self.classes) == 2:
+            self.positive_class = sorted(self.classes)[1]
+        else:
+            self.positive_class = None
 
-def train_random_forest(X_train, y_train) -> RandomForestClassifier:
-    model = RandomForestClassifier(random_state=42)
-    model.fit(X_train, y_train) # fit to the training set
-    return model
+        self.trees = []
+        n_samples = len(y)
 
-def evaluate_model(model, X_test, y_test):
-    y_pred = model.predict(X_test)
-    y_prob = model.predict_proba(X_test)[:, 1] #probability of prediction correctness
+        for _ in range(self.n_estimators):
+            indices = np.random.choice(n_samples, size=n_samples, replace=True)
+            X_sample = X.iloc[indices]
+            y_sample = y.iloc[indices]
 
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
-    auc = roc_auc_score(y_test, y_prob)
+            tree = DecisionTree(max_features=m)
+            tree.fit(X_sample, y_sample, target_name="HeartDisease")
+            self.trees.append(tree)
+    
+    def predict(self, X):
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+        
+        all_preds = [tree.predict(X) for tree in self.trees]
+        all_preds = np.array(all_preds)
 
-    print("\n=== Wyniki klasyfikacji ===")
-    print(f"Dokładność (Accuracy): {accuracy:.4f}")
-    print(f"Precyzja (Precision): {precision:.4f}")
-    print(f"Czułość (Recall): {recall:.4f}")
-    print(f"Pole pod krzywą ROC (AUC): {auc:.4f}")
-
-    return y_prob
-
-def plot_roc_curve(y_test, y_prob, title :str ='ROC Curve') -> None:
-    fpr, tpr, _ = roc_curve(y_test, y_prob)
-    auc = roc_auc_score(y_test, y_prob)
-
-    plt.plot(fpr, tpr, label=f'ROC curve (AUC = {auc:.2f})')
-    plt.plot([0, 1], [0, 1], 'k--')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate (Recall)')
-    plt.title(title)
-    plt.legend()
-    plt.grid()
-    plt.show()
-
-def optimize_hyperparameters(X_train, y_train):
-    param_grid = {'n_estimators': [10, 50, 100, 200, 300, 400, 500]}
-    grid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=5, scoring='recall')
-    grid_search.fit(X_train, y_train)
-    print(f"\nNajlepsze parametry: {grid_search.best_params_}")
-    return grid_search.best_estimator_
-
-def create_forest_n_trees(X_train, y_train, X_test, n_estimators):
-    model = RandomForestClassifier(n_estimators=n_estimators, random_state=42)
-    model.fit(X_train, y_train)
-
-    y_pred = model.predict(X_test)
-    y_prob = model.predict_proba(X_test)[:, 1]
-
-    return model, y_pred, y_prob
+        final_preds = []
+        for j in range(all_preds.shape[1]):
+            votes = all_preds[:, j]
+            final_preds.append(Counter(votes).most_common(1)[0][0])
+        return np.array(final_preds)
+    
+    def predict_proba(self, X):
+        if len(self.classes) != 2:
+            raise ValueError("predict_proba dziala binarnie")
+        
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+        
+        all_preds = [tree.predict(X) for tree in self.trees]
+        all_preds = np.array(all_preds)
+        return np.mean(all_preds == self.positive_class, axis=0)
