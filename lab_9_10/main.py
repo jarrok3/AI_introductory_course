@@ -28,7 +28,7 @@ if __name__ == "__main__":
     num_classes = y_train.shape[1]
     net = Network([num_features, 128, 64, 32, 16, num_classes]) # 3 layers
     
-    max_steps = 10000
+    max_steps = 100
     batch_size = 32
     initial_learning_rate = 0.01
     decay_rate = 0.95
@@ -38,10 +38,11 @@ if __name__ == "__main__":
     steps_without_improvement = 0
     
     for step in range(max_steps):
+        # Shuffle the training data
         np.random.shuffle(training_data)
-        mini_batches = [training_data[k:k+batch_size] for k in range(0, len(training_data), batch_size)]
-        for mini_batch in mini_batches:
-            net.gradient_descent(mini_batch, max_steps=1, learning_rate = initial_learning_rate * (decay_rate ** (step // decay_steps)))
+        
+        # Train on the entire dataset
+        net.gradient_descent(training_data, max_steps=100, learning_rate=initial_learning_rate * (decay_rate ** (step // decay_steps)))
         
         # Calculate validation loss
         validation_loss = 0
@@ -61,7 +62,7 @@ if __name__ == "__main__":
         
         # Stop if no improvement for 'patience' steps
         if steps_without_improvement >= patience:
-            print("Early stopping triggered.")
+            print(f"Early stopping triggered at step {step+1}.")
             break
 
     correct = net.evaluate(test_data)

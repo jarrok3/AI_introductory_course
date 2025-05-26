@@ -85,7 +85,7 @@ class Network(object):
             self.biases = [b - (learning_rate / n) * db
                            for b, db in zip(self.biases, total_nabla_b)]
 
-            print(f"step {step+1} finished")
+#            print(f"step {step+1} finished")
 
     def evaluate(self, test_data):
         """Accuracy evaluation"""
