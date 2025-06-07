@@ -5,10 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python Debugger: Current File with Arguments",
             "type": "debugpy",
             "request": "launch",
-            "program": "${C:\\Users\\jarro\\OneDrive\\Dokumenty\\Studia - II stopień\\WSI\\AI_introductory_course\\lab_5_6\\main.py}",
+            "program": "C:\\Users\\jarro\\OneDrive\\Dokumenty\\Studia - II stopień\\WSI\\AI_introductory_course\\lab_5_6\\main.py",
             "console": "integratedTerminal",
             "args": "${command:pickArgs}"
         }
