@@ -115,7 +115,7 @@ class BayesClassificator:
         return pd.DataFrame(results)
 
     @staticmethod
-    def evaluate_kfold(X: pd.DataFrame, y: pd.Series, k: int = 5) -> pd.DataFrame:
+    def evaluate_kfold(X: pd.DataFrame, y: pd.Series, k: int = 25) -> pd.DataFrame:
         """
         Evaluate model using K-Fold cross-validation.
         Returns DataFrame with metrics from each fold.
