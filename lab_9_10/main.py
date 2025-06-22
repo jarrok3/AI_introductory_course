@@ -23,9 +23,13 @@ if __name__ == "__main__":
 
     num_features = X_train.shape[1]
     num_classes = y_train.shape[1]
-    net = Network([num_features, 16, num_classes]) # 3 layers
+    net = Network([num_features, 8, num_classes]) # 3 layers
     
     net.gradient_descent(training_data, max_steps=2500, learning_rate=0.05)
+    correct = net.evaluate(training_data)
+    total   = len(training_data)
+    accuracy = correct / total * 100
+    print(f"Accuracy on training set: {correct}/{total} correct ({accuracy:.2f}%)")
     correct = net.evaluate(test_data)
     total   = len(test_data)
     accuracy = correct / total * 100
